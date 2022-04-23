@@ -23,6 +23,9 @@ app.post('/tweets', (req, res) => {
 
 app.get('/tweets', (req, res) => {
     let tweetsFiltrados = []
+    
+    if (tweets.length > 10) tweets = tweets.slice(tweets.length - 10, tweets.length)
+
     tweets.forEach(tweet => {
         usuarios.find(usuario => {
             if(usuario.username === tweet.username){
