@@ -13,17 +13,17 @@ app.post('/sign-up', (req, res) => {
     const usuario = req.body
 
     if(usuario.username === '' || usuario.avatar === ''){
-        res.sendStatus(400)
+        res.status(400).send("Todos os campos são obrigatórios!")
     }else{
         usuarios = [... usuarios, usuario]
-        res.send("OK")
+        res.status(201).send("OK")
     }
     
 });
 
 app.post('/tweets', (req, res) => {
     if(req.body.tweet === ''){
-        res.sendStatus(400, "Todos os campos são obrigatórios!")
+        res.status(400).send("Todos os campos são obrigatórios!")
     }else{
 
         tweets = [... tweets, {
@@ -36,10 +36,30 @@ app.post('/tweets', (req, res) => {
     
 });
 
+app.get('/tweets:USERNAME', (req, res) => {
+    let tweetsFiltrados = []
+    const user = req.params.USERNAME;
+
+    tweets.forEach(tweet => {
+        usuarios.find(usuario => {
+            if(user === tweet.username){
+                tweetsFiltrados = [... tweetsFiltrados,{
+                    username: tweet.username,
+                    avatar: usuario.avatar,
+                    tweet: tweet.tweet
+                }]
+            }})
+    })
+
+    res.send(tweetsFiltrados)
+
+
+})
+
 app.get('/tweets', (req, res) => {
     
     const page = parseInt(req.query.page)
-    console.log(page);
+    
     let tweetsFiltrados = []
     let posisaoFinal = 0;
     let posisaoInicial = 0;
@@ -67,15 +87,12 @@ app.get('/tweets', (req, res) => {
                 }})
         })
 
-        
-        res.status(201).send(tweetsFiltrados)
-        console.log(tweetsFiltrados);
+        res.send(tweetsFiltrados)
 
     } else{
-        res.status(400, "Informe uma página válida!")
+        res.status(400).send("Informe uma página válida!")
     }
-    
-    
+     
 });
 
 app.listen(5000,()=>{
